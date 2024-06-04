@@ -1,7 +1,7 @@
 
 .. toctree::
    :maxdepth: 3
-   :caption: keyestudio docs
+   :caption: KD3022 Kidsbits STEM Electronic Building Blocks Smart Binsite Kit
 
    README.md
    docs/index.md

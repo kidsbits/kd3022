@@ -1,4 +1,4 @@
-# Kidsbits STEM Electronic Building Blocks Smart Binsite Kit
+# Smart Binsite Kit
 
 ![01](media/01.jpg)
 
