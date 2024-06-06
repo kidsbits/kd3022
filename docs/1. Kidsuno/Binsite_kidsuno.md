@@ -1568,6 +1568,8 @@ Interface: 3pin interface with a spacing of 2.54 mm
 
 Servo is generally controlled by PWM (pulse width modulation). Herein, this 270°(-45°  ~ 225°) servo is compatible with LEGO.
 
+![31014](media/31014.png)
+
 Rotation range of 270° servo: -45° ~ 225°, which is 270° in total, rather than rotating to 270°.
 
 Before using it, we need to import its library first.
@@ -1727,9 +1729,15 @@ In this experiment, we will apply both LED module and button module to form a li
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 8**
 
 ![41_09](media/41_09.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![41_10](media/41_10.png)
 
 ![line1](media/line1.png)
 
@@ -1867,9 +1875,15 @@ Herein, we combine the photoresistor and LED module to design an automatic light
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step9**
 
 ![42_09](media/42_09.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![42_10](media/42_10.png)
 
 ![line1](media/line1.png)
 
@@ -2008,9 +2022,15 @@ In this experiment, we will introduce how to adjust the brightness of LED module
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 7**
 
 ![43_07](media/43_07.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![43_08](media/43_08.png)
 
 ![line1](media/line1.png)
 
@@ -2251,9 +2271,15 @@ After calibration, disconnect the board to computer and continue to mount.
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 12**
 
 ![44_13](media/44_13.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![44_17](media/44_17.png)
 
 ![line1](media/line1.png)
 
@@ -2477,9 +2503,15 @@ After calibration, disconnect the board to computer and continue to mount.
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 14**
 
 ![45_15](media/45_15.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![45_16](media/45_16.png)
 
 ![line1](media/line1.png)
 
@@ -2638,9 +2670,15 @@ Yet if <span style="color: rgb(10, 10, 200);">you have not assemble the building
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step7**
 
 ![46_07](media/46_07.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![46_08](media/46_08.png)
 
 ![line1](media/line1.png)
 

@@ -828,8 +828,6 @@ Maximum detection distance: 173 mm
 
 Operating temperature: -10°C ~ +50°C
 
-Output signal: digital signal
-
 Detection range: 2 ~ 40 cm
 
 Dimensions: 24 x 48 x 18 mm (without housing)
@@ -1610,6 +1608,10 @@ Interface: 3pin interface with a spacing of 2.54 mm
 
 Servo is generally controlled by PWM (pulse width modulation). Herein, this 270°(0°  ~ 270°) servo is compatible with LEGO.
 
+![31007](media/31007.png)
+
+Rotation range of 270° servo: -45° ~ 225°, which is 270° in total, rather than rotating to 270°.
+
 ![peg](media/peg.png)
 
 ![line3](media/line3.png)
@@ -1688,29 +1690,21 @@ from machine import Pin, PWM
 import time
 
 servo = PWM(Pin(19))
-servo.freq(50)
+servo.freq(50)  #T = 1/f = 20ms
 
-'''
-The duty cycle corresponding to the angle 
-0°----2.5%----1638
-67.5°----5%----3276
-135‬°----7.5%----4915
-202.5°----10%----6553
-270°----12.5%----8191
-'''
-angle_0 = 1638   #the value of 0° duty cycle
-angle_90 = 3801  #the value of 90° duty cycle
-angle_180 = 5963 #the value of 180° duty cycle
-angle_270 = 8191 #the value of 270° duty cycle
+def angle(x):
+    return int((((x + 45) * 1.8 / 270) + 0.6 )/ 20 *65535)
 
-while True:
-    servo.duty_u16(angle_0)
+while True:   
+    servo.duty_u16(angle(-45))
     time.sleep(1)
-    servo.duty_u16(angle_90)
+    servo.duty_u16(angle(0))
     time.sleep(1)
-    servo.duty_u16(angle_180)
+    servo.duty_u16(angle(90))
     time.sleep(1)
-    servo.duty_u16(angle_270)
+    servo.duty_u16(angle(180))
+    time.sleep(1)
+    servo.duty_u16(angle(225))
     time.sleep(1)
 ```
 
@@ -1726,41 +1720,62 @@ while True:
 
   **machine.PWM**
 
-   - `machine.PWM(pin)`: PWM object function, specifies that GPIO is reinitialized and set to PWM output mode.
+- `machine.PWM(pin)`: PWM object function, specifies that GPIO is reinitialized and set to PWM output mode.
 
      pin: GPIO pin that is set to PWM output mode
 
-   - `PWM.freq（value）`: PWM output frequency function
+- `PWM.freq(value)`: PWM output frequency function
 
      value: PWM output frequency. The value should conform to the PWM frequency calculation formula.
 
-   - `PWM.duty_u16（value）`: set duty cycle, the corresponding value is calculated automatically.
+- `PWM.duty_u16(value)`: set duty cycle, the corresponding value is calculated automatically.
 
      value: duty cycle ratio, within 0-65536.
+
+- `PWM.duty_ns(value)`: Set the length of time (in ns) for output high level of a cycle.
+
+	value: duty cycle ratio, within 0-65536.
 
 ![line2](media/line2.png)
 
 2. `pwm = PWM(Pin(19))` 
 
-   set servo pin to io19m output PWM.
+   set servo pin to io19 output PWM.
 
 ![line2](media/line2.png)
 
 3. `pwm.freq(50)`
 
    set PWM output frequency to 50.
+   
+   According to the principle, servo control generally requires a pulse of about 20ms(0.02s), so $ f= \frac {1}{T} =\frac {1}{0.02}=50$
 
 ![line2](media/line2.png)
 
-4. `angle_0 = 1638`
+4. ```python
+	def angle(x):
+	    return int((((x + 45) * 1.8 / 270) + 0.6 )/ 20 *65535)
+	```
 
-   the value of 0° duty cycle.
+	Define a function angle to calculate the corresponding **value** in `PWM.duty_u16(value)` . You only need to set x to the angle you need (range: -45 ~ 225).
+
+	**Extension:**
+
+	270° servo pulse width:
+
+	-45°: 600us(0.6ms)
+
+	90°: 1500us(1.5ms)
+
+	180°: 2400us(2.4ms)
+
+	The control of servo requires a pulse of about 20ms, of which the high level is within the range of 0.6ms ~ 2.4ms, corresponding to the starting and end position of the rotation Angle.
 
 ![line2](media/line2.png)
 
-5. `pwm.duty_u16(angle_0)`
+5. `servo.duty_u16(angle(-45))`
 
-   set PWM duty cycle, within 0 ~ 65535, here is 1638 which is the value of 0° duty cycle.
+   Call angle() function to set PWM duty cycle. Here we set to the duty cycle corresponding to -45°.
 
 ![5bottom](media/5bottom.png)
 
@@ -1768,7 +1783,7 @@ while True:
 
 ![4top](media/4top.png)
 
-After uploading code, servo rotates to 0° and stop 1s; then it rotates to 90° and stop 1s; then it rotates to 180° and stop 1s; at last it rotates to 270° and stop 1s. After these steps, it will back to 0°, in a circulation.
+After uploading code, servo rotates from -45° to 0° and stops for 1s; then it rotates to 90° with a delay of 1s; then it rotates to 180° and then to 225° with intervals of 1s. After these steps, it will back to -45°, in a circulation.
 
 Click ![1413](media/1413.png) or press Ctrl+C to exit.
 
@@ -1776,9 +1791,9 @@ Click ![1413](media/1413.png) or press Ctrl+C to exit.
 
 ---
 
-## Comprehension
+## 4. Comprehension
 
-### 1 Manual Lighting
+### 4.1 Manual Lighting
 
 In this experiment, we will apply both LED module and button module to form a lighting device.
 
@@ -1842,9 +1857,15 @@ In this experiment, we will apply both LED module and button module to form a li
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 8**
 
 ![41_09](media/41_09.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![41_10](media/41_10.png)
 
 ![line1](media/line1.png)
 
@@ -1901,7 +1922,7 @@ After uploading code, press the button, and LED lights up. When you release the 
 
 ---
 
-### 2 Automatic Lighting
+### 4.2 Automatic Lighting
 
 Herein, we combine the photoresistor and LED module to design an automatic lighting system.
 
@@ -1967,9 +1988,15 @@ Herein, we combine the photoresistor and LED module to design an automatic light
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 9**
 
 ![42_09](media/42_09.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![42_10](media/42_10.png)
 
 ![line1](media/line1.png)
 
@@ -2041,7 +2068,7 @@ In the code, the threshold value 10000 can be modified according to your needs.
 
 ---
 
-### 3 Light Adjustment
+### 4.3 Light Adjustment
 
 In this experiment, we will introduce how to adjust the brightness of LED module via a potentiometer.
 
@@ -2095,9 +2122,15 @@ In this experiment, we will introduce how to adjust the brightness of LED module
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 7**
 
 ![43_07](media/43_07.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![43_08](media/43_08.png)
 
 ![line1](media/line1.png)
 
@@ -2174,7 +2207,7 @@ Upload code and rotate the potentiometer, and the LED brightness will change acc
 
 ---
 
-### 4 Smart Trash Can (Manual Mode)
+### 4.4 Smart Trash Can (Manual Mode)
 
 In this project, we use a joystick and a servo to control the trash can lid.
 
@@ -2272,9 +2305,14 @@ Open Servo_Calibration.py and click ![1407](media/1407.png).
 from machine import Pin, PWM
 import time
 
-pwm = PWM(Pin(19))
-pwm.freq(50)
-pwm.duty_u16(4800)
+servo = PWM(Pin(19))
+servo.freq(50)  #T = 1/f = 20ms
+
+def angle(x):
+    return int((((x + 45) * 1.8 / 270) + 0.6 )/ 20 *65535)
+
+while True:   
+    servo.duty_u16(angle(90))
 ```
 
 After calibration, disconnect the board to computer and continue to mount.
@@ -2291,9 +2329,15 @@ After calibration, disconnect the board to computer and continue to mount.
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 12**
 
 ![44_13](media/44_13.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![44_17](media/44_17.png)
 
 ![line1](media/line1.png)
 
@@ -2315,11 +2359,15 @@ from machine import Pin,PWM
 import time
 from ROCKER import rocker
 
+servo = PWM(Pin(19))
+servo.freq(50)  #T = 1/f = 20ms
+
+def angle(x):
+    return int((((x + 45) * 1.8 / 270) + 0.6 )/ 20 *65535)
+
 scl = Pin(5) 
 sda = Pin(4)
 bus = 0
-servo = PWM(Pin(19))
-servo.freq(50)
 snsr = rocker (bus, scl, sda)
 
 while True:
@@ -2327,9 +2375,9 @@ while True:
     print('y:',y)
     time.sleep(0.1)
     if 0 <= y < 490:
-        servo.duty_u16(1400)
+        servo.duty_u16(angle(-45))
     else:
-        servo.duty_u16(4800)
+        servo.duty_u16(angle(90))
 ```
 
 #### Explanation
@@ -2350,8 +2398,8 @@ while True:
 
    ② determine whether the value in y-axis is within 0 to 490 (with the servo being calibrated, the trash can lid is closed at this time).
 
-   - True: set the duty cycle of servo to 1400, and the servo rotates to open the lid.
-   - False: set the duty cycle of servo to 4800, and the servo rotates to close the lid.
+   - True: the servo rotates to -45° to open the lid.
+   - False: the servo rotates to 90° to close the lid.
 
 ![5bottom](media/5bottom.png)
 
@@ -2367,7 +2415,7 @@ Upload code and push the joystick as follows, and the lid will open. If you rele
 
 ---
 
-### 5 Smart Trash Can (Automatic Mode)
+### 4.5 Smart Trash Can (Automatic Mode)
 
 We will construct an automatic trash can with obstacle avoidance sensor, active buzzer and servo.
 
@@ -2476,9 +2524,14 @@ Open Servo_Calibration.py and click ![1407](media/1407.png).
 from machine import Pin, PWM
 import time
 
-pwm = PWM(Pin(19))
-pwm.freq(50)
-pwm.duty_u16(4800)
+servo = PWM(Pin(19))
+servo.freq(50)  #T = 1/f = 20ms
+
+def angle(x):
+    return int((((x + 45) * 1.8 / 270) + 0.6 )/ 20 *65535)
+
+while True:   
+    servo.duty_u16(angle(90))
 ```
 
 After calibration, disconnect the board to computer and continue to mount.
@@ -2507,9 +2560,15 @@ After calibration, disconnect the board to computer and continue to mount.
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 14**
 
 ![45_15](media/45_15.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![45_16](media/45_16.png)
 
 ![line1](media/line1.png)
 
@@ -2530,19 +2589,24 @@ Open 4.5Smart bin_Automatic mode.py and click ![1407](media/1407.png).
 from machine import Pin,PWM
 import time
 
+servo = PWM(Pin(19))
+servo.freq(50)  #T = 1/f = 20ms
+
+def angle(x):
+    return int((((x + 45) * 1.8 / 270) + 0.6 )/ 20 *65535)
+
+
 Obsensor = Pin(22,Pin.IN)
 Buzzer = Pin(2,Pin.OUT)
-servo = PWM(Pin(19))
-servo.freq(50)
 
 while True:
     Obsensor.value()
     if Obsensor.value() == 0: #detects something
         Buzzer.on()           #buzzer alarms
-        servo.duty_u16(1400)  #lid opens
+        servo.duty_u16(angle(-45))  #lid opens
     else:                     #detects nothing
         Buzzer.off()          #buzzer stays quiet
-        servo.duty_u16(4800)  #lid closes
+        servo.duty_u16(angle(90))  #lid closes
     time.sleep(0.5)
 ```
 
@@ -2560,8 +2624,8 @@ while True:
 
    ② Determine whether the read value equals 0.
 
-   - If it is 0, i.e., the sensor detects obstacles, the buzzer will emit sound. At this time, the duty cycle of servo is 1400, and the servo rotates to open the lid.
-   - If it is not 0, i.e., there is no obstacle, the buzzer will not alarm and its duty cycle will be 4800, so then the servo rotates to close the lid.
+   - If it is 0, i.e., the sensor detects obstacles, the buzzer will emit sound. At this time, the servo rotates to open the lid.
+   - If it is not 0, i.e., there is no obstacle, the buzzer will not alarm and the servo rotates to close the lid.
 
 ![5bottom](media/5bottom.png)
 
@@ -2581,7 +2645,7 @@ When the obstacle avoidance sensor detects it, the buzzer makes a sound, and the
 
 ---
 
-### 6 Smart Trash Can (Drop Alarm)
+### 4.6 Smart Trash Can (Drop Alarm)
 
 In this experiment, we will add a drop alarm system to the trash can with an SC7A20TR three-axis acceleration sensor and an active buzzer.
 
@@ -2653,9 +2717,15 @@ Yet if <span style="color: rgb(10, 10, 200);">you have not assemble the building
 
 ![line1](media/line1.png)
 
-**Completed!**
+**Step 7**
 
 ![46_07](media/46_07.png)
+
+![line1](media/line1.png)
+
+**Completed!**
+
+![46_08](media/46_08.png)
 
 ![line1](media/line1.png)
 
